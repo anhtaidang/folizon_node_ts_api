@@ -1,0 +1,22 @@
+{
+    "env": "development",
+    "dbConfig": {
+        "host": "mysql",
+        "user": "root",
+        "password": "password",
+        "database": "sequelize",
+        "pool": {
+            "min": 0,
+            "max": 5
+        }
+    },
+    "secretKey": "secretKey",
+    "log": {
+        "format": "dev",
+        "dir": "../logs"
+    },
+    "cors": {
+        "origin": true,
+        "credentials": true
+    }
+}
