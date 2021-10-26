@@ -1,10 +1,10 @@
 {
     "env": "development",
     "dbConfig": {
-        "host": "mysql",
+        "host": "localhost",
         "user": "root",
-        "password": "password",
-        "database": "sequelize",
+        "password": "123456",
+        "database": "folizon_db",
         "pool": {
             "min": 0,
             "max": 5

@@ -18,9 +18,10 @@ class AuthService {
     if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
+    // const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
 
-    return createUserData;
+    // return createUserData;
+    return;
   }
 
   public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
@@ -48,7 +49,7 @@ class AuthService {
   }
 
   public createToken(user: User): TokenData {
-    const dataStoredInToken: DataStoredInToken = { id: user.id };
+    const dataStoredInToken: DataStoredInToken = { id: user.uid };
     const secretKey: string = config.get('secretKey');
     const expiresIn: number = 60 * 60;
 
