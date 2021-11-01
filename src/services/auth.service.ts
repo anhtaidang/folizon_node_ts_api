@@ -1,63 +1,88 @@
-import bcrypt from 'bcrypt';
 import config from 'config';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import DB from '@databases';
-import { CreateUserDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
-import { User } from '@interfaces/users.interface';
+import { UserDTO } from '@interfaces/users.interface';
 import { isEmpty } from '@utils/util';
+import UserService from '@services/user.service';
+import { FindOptions } from 'sequelize';
 
 class AuthService {
-  public users = DB.Users;
+  private users = DB.Users;
 
-  public async signup(userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+  private userService = new UserService();
+  private authKey: string = config.get('authKey');
+  private secretKey: string = config.get('authKey');
 
-    const findUser: User = await this.users.findOne({ where: { email: userData.email } });
-    if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
-
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    // const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
-
-    // return createUserData;
-    return;
+  public async getCurrentUserLogin(req) {
+    let userLogin: UserDTO = null;
+    const token = req.cookies[this.authKey as string] || req.headers[this.authKey as string];
+    if (token) {
+      const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+      if (decoded) {
+        const { uid }: JwtPayload = decoded;
+        userLogin = await this.userService.getUserInfoById(uid, { attributes: ['uid'] });
+      }
+    }
+    return userLogin;
   }
 
-  public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+  // public async signup(userData: CreateUserDto): Promise<User> {
+  //   if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+  //
+  //   const findUser: User = await this.users.findOne({ where: { email: userData.email } });
+  //   if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
+  //
+  //   // const hashedPassword = await bcrypt.hash(userData.password, 10);
+  //   // const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
+  //
+  //   // return createUserData;
+  //   return;
+  // }
 
-    const findUser: User = await this.users.findOne({ where: { email: userData.email } });
-    if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
+  public async login(
+    password: string,
+    option?: FindOptions<UserDTO>,
+  ): Promise<{ cookie?: string; user?: UserDTO; tokenData?: TokenData; errorMessage?: string }> {
+    const findUser: UserDTO = await this.users.findOne({ where: { isActive: true, ...(option?.where || {}) } });
+    if (!findUser) return { errorMessage: 'Tài khoản không tồn tại!' };
 
-    const isPasswordMatching: boolean = await bcrypt.compare(userData.password, findUser.password);
-    if (!isPasswordMatching) throw new HttpException(409, "You're password not matching");
+    // const isPasswordMatching: boolean = await bcrypt.compare(password, findUser.password);
+    const isPasswordMatching: boolean = password === findUser.password;
+    if (!isPasswordMatching) return { errorMessage: 'Tài khoản hoặc mật khẩu không đúng!' };
 
     const tokenData = this.createToken(findUser);
     const cookie = this.createCookie(tokenData);
 
-    return { cookie, findUser };
+    return { cookie, user: findUser, tokenData };
   }
 
-  public async logout(userData: User): Promise<User> {
+  public async logout(userData: UserDTO): Promise<UserDTO> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
-    const findUser: User = await this.users.findOne({ where: { email: userData.email, password: userData.password } });
+    const findUser: UserDTO = await this.users.findOne({ where: { email: userData.email, password: userData.password } });
     if (!findUser) throw new HttpException(409, "You're not user");
 
     return findUser;
   }
 
-  public createToken(user: User): TokenData {
-    const dataStoredInToken: DataStoredInToken = { id: user.uid };
-    const secretKey: string = config.get('secretKey');
-    const expiresIn: number = 60 * 60;
+  public createToken(user: UserDTO): TokenData {
+    const dataStoredInToken: DataStoredInToken = { uid: user.uid, username: user.username, email: user.email };
+    const jwtExpirySeconds = 86400 * 30;
 
-    return { expiresIn, token: jwt.sign(dataStoredInToken, secretKey, { expiresIn }) };
+    const accessToken = jwt.sign(dataStoredInToken, this.secretKey, {
+      algorithm: 'HS256',
+      expiresIn: jwtExpirySeconds, // expires in 24 hours
+      // expiresIn: jwtExpirySeconds * 1000,
+    });
+
+    return { expiresIn: jwtExpirySeconds, accessToken };
   }
 
   public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
+    // Authorization
+    return `${this.authKey}=${tokenData.accessToken}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
   }
 }
 

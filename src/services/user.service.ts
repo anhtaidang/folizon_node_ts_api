@@ -1,25 +1,32 @@
-// import bcrypt from 'bcrypt';
 import DB from '@databases';
-import { CreateUserDTO, User } from '@interfaces/users.interface';
+import { CreateUserDTO, UserDTO } from '@interfaces/users.interface';
 import { FindOptions } from 'sequelize/types/lib/model';
 
 class UserService {
   public users = DB.Users;
 
-  public async findAll(option?: FindOptions<User>): Promise<User[]> {
+  public async findAll(option?: FindOptions<UserDTO>): Promise<UserDTO[]> {
     return this.users.findAll(option);
   }
 
-  public async findOne(option?: FindOptions<User>): Promise<User> {
+  public async findOne(option?: FindOptions<UserDTO>): Promise<UserDTO> {
     return this.users.findOne(option);
   }
 
-  public async findById(userId: number): Promise<User> {
-    return this.users.findByPk(userId);
+  public async findById(userId: number, options?: FindOptions<UserDTO>): Promise<UserDTO> {
+    return this.users.findByPk(userId, options);
   }
 
-  public async create(userData: CreateUserDTO): Promise<User> {
+  public async create(userData: CreateUserDTO): Promise<UserDTO> {
     return this.users.create(userData);
+  }
+
+  public async getUserInfoById(uid: number, option: FindOptions<UserDTO> = {}): Promise<UserDTO> {
+    return this.users.findOne({ ...option, where: { uid, isActive: true, ...(option.where || {}) } });
+  }
+
+  public async getUserInfoByUsername(username: string, option: FindOptions<UserDTO> = {}): Promise<UserDTO> {
+    return this.users.findOne({ ...option, where: { username, isActive: true, ...(option.where || {}) } });
   }
   //
   // public async updateUser(userId: number, userData: CreateUserDto): Promise<User> {

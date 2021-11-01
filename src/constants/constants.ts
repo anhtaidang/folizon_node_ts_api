@@ -17,3 +17,5 @@ export const PRODUCTION_MODE = 'production';
 export const ACCESS_TOKEN_HEADER = 'x-folizon-access-token';
 
 export const ROOT_CATEGORY_URL_REWRITE = 'root-category';
+
+export const USER_AVATAR_DEFAULT = 'https://gw.alipayobjects.com/zos/rmsportal/sfjbOqnsXXJgNCjCzDBL.png';

@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt';
 import SHA256 from 'crypto-js/sha256';
 import SHA1 from 'crypto-js/sha1';
+import { EnumFolderType } from '@/constants/enum';
+import config from 'config';
+import { S3MediaConfig } from '@interfaces/s3Config.interface';
 
 /**
  * @method isEmpty
@@ -22,12 +25,16 @@ export const isEmpty = (value: string | number | object): boolean => {
   }
 };
 
-export const getBooleanFromTinyint = (value: number): boolean => value !== 0;
+export function isNullOrEmpty(value) {
+  return value === undefined || Number.isNaN(value) || value === null || (typeof value === 'string' && value.trim() === '');
+}
 
-export const getFileNameFromUrl = url => {
-  const data = url.match(/[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/);
-  return data[0];
-};
+export function isEmptyObject(obj) {
+  if (obj !== null && obj !== undefined) return Object.keys(obj).length === 0;
+  return true;
+}
+
+export const getBooleanFromTinyint = (value: number): boolean => value !== 0;
 
 export const slugify = string => {
   const a = 'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
@@ -57,4 +64,34 @@ export const cryptPassword = (password, verifyCode = process.env.SECRET_KEY) => 
     salt,
     hash: hashPassword(password, salt, verifyCode),
   };
+};
+
+export function getFieldEnumConfig({ value, enumConfig, fieldName = 'title', keyCompare = 'id' }) {
+  let valueReturn = '';
+  Object.keys(enumConfig).forEach(key => {
+    if (value === enumConfig[key][keyCompare] && !isNullOrEmpty(enumConfig[key][fieldName])) {
+      valueReturn = enumConfig[key][fieldName];
+    }
+  });
+  return valueReturn;
+}
+
+export const genS3MediaUrlByFolderType = (folderType, filename) => {
+  const s3MediaConfig: S3MediaConfig = config.get('s3Media');
+  return `${s3MediaConfig.host}/media/${getFieldEnumConfig({
+    value: folderType,
+    enumConfig: EnumFolderType,
+    fieldName: 'foldername',
+  })}/${filename}`;
+};
+
+export const getFileNameFromUrl = (url: string) => {
+  const data = url.match(/[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/);
+  return data[0];
+};
+
+export const validateUrl = (value: string) => {
+  return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(
+    value,
+  );
 };

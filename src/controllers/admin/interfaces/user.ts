@@ -1,4 +1,4 @@
-export interface CreateUserController {
+export interface CreateUserReq {
   personalInfo: {
     firstName: string;
     lastName: string;
@@ -15,4 +15,13 @@ export interface CreateUserController {
     username: string;
     password?: string;
   };
+}
+
+export interface GetUserIdsReq {
+  uid: number;
+  name: string;
+}
+
+export interface GetUserInfoByIdsReq {
+  uids: number[];
 }

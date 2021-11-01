@@ -1,22 +1,29 @@
 {
-    "env": "development",
-    "dbConfig": {
-        "host": "localhost",
-        "user": "root",
-        "password": "123456",
-        "database": "folizon_db",
-        "pool": {
-            "min": 0,
-            "max": 5
-        }
-    },
-    "secretKey": "secretKey",
-    "log": {
-        "format": "dev",
-        "dir": "../logs"
-    },
-    "cors": {
-        "origin": true,
-        "credentials": true
+  "env": "development",
+  "dbConfig": {
+    "host": "localhost",
+    "user": "root",
+    "password": "123456",
+    "database": "folizon_db",
+    "pool": {
+      "min": 0,
+      "max": 5
     }
+  },
+  "secretKey": "folizon",
+  "authKey": "x-folizon-access-token",
+  "s3Media": {
+    "host": "https://ss-hn-1.bizflycloud.vn/images-molis-art-test",
+    "endpoint": "https://ss-hn-1.bizflycloud.vn",
+    "accessKeyId": "6ERH4LYVSIT1ZKZAQDKL",
+    "secretAccessKey": "veYAOxZ2slQ088PrHooet8vTT7ULJ7Ud6fD970tm"
+  },
+  "log": {
+    "format": "dev",
+    "dir": "../logs"
+  },
+  "cors": {
+    "origin": true,
+    "credentials": true
+  }
 }

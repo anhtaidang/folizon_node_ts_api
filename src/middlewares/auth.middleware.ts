@@ -7,17 +7,21 @@ import { DataStoredInToken, RequestWithUser } from '@interfaces/auth.interface';
 
 const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-    const Authorization = req.cookies['Authorization'] || req.header('Authorization').split('Bearer ')[1] || null;
-
-    if (Authorization) {
+    const authKey: string = config.get('authKey');
+    const authorization = req.cookies[authKey] || req.header(authKey) || null;
+    if (authorization) {
       const secretKey: string = config.get('secretKey');
-      const verificationResponse = jwt.verify(Authorization, secretKey) as DataStoredInToken;
-      const userId = verificationResponse.id;
+      const verificationResponse = jwt.verify(authorization, secretKey) as DataStoredInToken;
+      const userId = verificationResponse.uid;
       const findUser = await DB.Users.findByPk(userId);
 
       if (findUser) {
-        req.user = findUser;
-        next();
+        if (findUser.isActive) {
+          req.user = findUser;
+          next();
+        } else {
+          next(new HttpException(401, 'User is not active'));
+        }
       } else {
         next(new HttpException(401, 'Wrong authentication token'));
       }

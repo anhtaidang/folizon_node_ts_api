@@ -1,60 +1,74 @@
 import { NextFunction, Request, Response } from 'express';
-import { User } from '@interfaces/users.interface';
-import UserService from '../../services/users.service';
+import UserService from '@services/user.service';
+import { DBOp } from '@databases';
 import { isEmpty } from 'class-validator';
-import { HttpException } from '@/exceptions/HttpException';
-import { sendApiResponseData, sendError } from '../utils';
 import { EnumResult } from '@/constants/enumCommon';
-import { CreateUserController } from '../interfaces/user';
 import { cryptPassword } from '@/utils/util';
+import { sendApiResponseData, sendError } from '../utils';
+import { CreateUserReq, GetUserIdsReq, GetUserInfoByIdsReq } from './interfaces/user';
+import { RequestBodyType } from '@interfaces/common.interface';
+import UserHelper from './helpers/user.helper';
 
 class UserController {
   public userService = new UserService();
-
+  public userHelper = new UserHelper();
   public getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const findAllUsersData: User[] = await this.userService.findAll();
-
-      res.status(200).json({ data: findAllUsersData, message: 'findAll' });
+      const findAllUsersData = await this.userService.findAll();
+      return sendApiResponseData(res, EnumResult.SUCCESS, {
+        data: findAllUsersData,
+      });
     } catch (error) {
       next(error);
     }
   };
 
-  public getUser = async (req: Request, res: Response, next: NextFunction) => {
+  public getUserIds = async (req: RequestBodyType<GetUserIdsReq>, res: Response, next: NextFunction) => {
     try {
-      const { uid } = req.body;
-      if (isEmpty(uid)) throw new HttpException(400, "You're not userId");
-      const userData: User = await this.userService.findOne({ where: { uid } });
-      if (!userData) throw new HttpException(409, "You're not user");
-    } catch (error) {
-      next(error);
+      let requestSearch = null;
+      const { uid, name } = req.body;
+      if (!isEmpty(uid)) {
+        requestSearch = { ...requestSearch, uid };
+      }
+      if (!isEmpty(name)) {
+        requestSearch = { ...requestSearch, fullname: { [DBOp.like]: `%${name}%` } };
+      }
+      const uids = await this.userService.findAll({
+        where: requestSearch,
+        order: [['createdTime', 'DESC']],
+        attributes: ['uid'],
+      });
+      return sendApiResponseData(res, EnumResult.SUCCESS, {
+        data: { uids: uids.map(m => m.uid) },
+      });
+    } catch (e) {
+      sendError(res, next)(e);
+      throw e;
     }
   };
 
-  public getUserById = async (req: Request, res: Response, next: NextFunction) => {
+  public getUserInfoByIds = async (req: RequestBodyType<GetUserInfoByIdsReq>, res: Response, next: NextFunction) => {
     try {
-      const userId = Number(req.params.id);
-
-      if (isEmpty(userId)) throw new HttpException(400, "You're not userId");
-      const findOneUserData: User = await this.userService.findById(userId);
-
-      if (!findOneUserData) throw new HttpException(409, "You're not user");
-
-      res.status(200).json({ data: findOneUserData, message: 'findOne' });
-    } catch (error) {
-      next(error);
+      const { uids } = req.body;
+      const userInfos = await this.userService.findAll({ where: { uid: { [DBOp.in]: uids } } });
+      const uinfors = userInfos.map(this.userHelper.bindDataUserInfos);
+      return sendApiResponseData(res, EnumResult.SUCCESS, {
+        data: { uinfors },
+      });
+    } catch (e) {
+      sendError(res, next)(e);
+      throw e;
     }
   };
 
-  public createUser = async (req: Request, res: Response, next: NextFunction) => {
+  public createUser = async (req: RequestBodyType<CreateUserReq>, res: Response, next: NextFunction) => {
     try {
-      const { basicInfo, accountInfo, personalInfo }: CreateUserController = req.body;
+      const { basicInfo, accountInfo, personalInfo } = req.body;
 
       let codeResult = EnumResult.FAILD;
 
       const { salt, hash } = cryptPassword(accountInfo.password ?? '123456');
-      const createUserData: User = await this.userService.create({
+      const createUserData = await this.userService.create({
         avatar: basicInfo.avatar,
         username: accountInfo.username,
         email: accountInfo.email,
@@ -70,12 +84,27 @@ class UserController {
         createdTime: 0,
       });
       codeResult = EnumResult.SUCCESS;
-      return sendApiResponseData(res, codeResult, createUserData);
+      return sendApiResponseData(res, codeResult, { data: createUserData });
     } catch (error) {
       sendError(res, next)(error);
       throw error;
     }
   };
+
+  // public getUserById = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const userId = Number(req.params.id);
+  //
+  //     if (isEmpty(userId)) throw new HttpException(400, "You're not userId");
+  //     const findOneUserData: User = await this.userService.findById(userId);
+  //
+  //     if (!findOneUserData) throw new HttpException(409, "You're not user");
+  //
+  //     return sendApiResponseData(res, EnumResult.SUCCESS, { data: findOneUserData });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // };
 
   // public updateUser = async (req: Request, res: Response, next: NextFunction) => {
   //   try {

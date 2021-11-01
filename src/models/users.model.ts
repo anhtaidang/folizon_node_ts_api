@@ -1,12 +1,12 @@
 // import sequelize, { Sequelize, DataTypes, Model, Optional, ModelDefined } from 'sequelize';
 import { Sequelize, DataTypes, Model, Optional, ModelDefined, ModelCtor } from 'sequelize';
-import { User } from '@interfaces/users.interface';
+import { UserDTO } from '@interfaces/users.interface';
 import moment from 'moment';
 import { getBooleanFromTinyint } from '@/utils/util';
 
-export type UserCreationAttributes = Optional<User, 'uid' | 'createdBy' | 'createdTime' | 'updatedBy' | 'updatedTime'>;
+export type UserCreationAttributes = Optional<UserDTO, 'uid' | 'createdBy' | 'createdTime' | 'updatedBy' | 'updatedTime'>;
 
-export class UserModel extends Model<User, UserCreationAttributes> implements User {
+export class UserModel extends Model<UserDTO, UserCreationAttributes> implements UserDTO {
   public uid: number;
   public email: string;
   public username: string;

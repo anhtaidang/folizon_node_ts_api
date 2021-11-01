@@ -1,15 +1,17 @@
 /* eslint-disable no-unused-vars */
 import { validate } from 'jsonschema';
 // import { EnumResult } from '@constants/enumCommon';
-import { sendApiResponseData, sendApiResponseErrorParams } from '@controllers/utils';
+import { sendApiResponseData } from '@controllers/utils';
+import { NextFunction, Request, Response } from 'express';
+import { EnumResult } from '@constants/enumCommon';
 
 const commonMiddleware = {
   verifyParseParam:
-    (instance, method = 'POST', dataFormat = 'JSON', errorHandler = sendApiResponseErrorParams) =>
-    (req, res, next) => {
+    (instance, method = 'POST', dataFormat = 'JSON') =>
+    (req: Request, res: Response, next: NextFunction) => {
       // console.log('verifyParseParam');
       const isVerifyParams = validate(req.body, instance).valid;
-      return isVerifyParams ? next() : errorHandler(res);
+      return isVerifyParams ? next() : sendApiResponseData(res, EnumResult.ERROR_PARAMS, { data: null });
     },
   verifyProcessHeader: async (req, res, next) => {
     // console.log('VerifyProcessHeader');

@@ -31,6 +31,8 @@ const dbConn = new Sequelize.Sequelize(database, user, password, {
 // sequelize.authenticate();
 
 const Users = UserModel(dbConn);
+Users.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
+Users.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });
 
 const DB = {
   Users,
@@ -48,5 +50,7 @@ const DB = {
       });
   },
 };
+
+export const DBOp = Sequelize.Op;
 
 export default DB;
