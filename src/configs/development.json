@@ -3,8 +3,8 @@
   "dbConfig": {
     "host": "localhost",
     "user": "root",
-    "password": "123456",
-    "database": "folizon_db",
+    "password": "danganhtai",
+    "database": "folizon_test_db",
     "pool": {
       "min": 0,
       "max": 5

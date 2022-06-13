@@ -1,8 +1,9 @@
 import config from 'config';
 import Sequelize from 'sequelize';
 import { dbConfig } from '@interfaces/db.interface';
-import UserModel from '@models/users.model';
 import { logger } from '@utils/logger';
+import UserModel from '@models/users.model';
+import CategoryModel from '@/models/category.model';
 
 const { host, user, password, database, pool }: dbConfig = config.get('dbConfig');
 
@@ -34,8 +35,13 @@ const Users = UserModel(dbConn);
 Users.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
 Users.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });
 
+const Category = CategoryModel(dbConn);
+Category.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
+Category.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });
+
 const DB = {
   Users,
+  Category,
   sequelize: dbConn, // connection instance (RAW queries)
   Sequelize, // library
   connect: () => {

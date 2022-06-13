@@ -95,3 +95,25 @@ export const validateUrl = (value: string) => {
     value,
   );
 };
+
+export const genUrlMediaByFolderType = (req, folderType = EnumFolderType.COMMON.id, filename = '') => {
+  return req
+    ? `${req.protocol}://${req.get('host')}/upload/media/${getFieldEnumConfig({
+        value: folderType,
+        enumConfig: EnumFolderType,
+        fieldName: 'foldername',
+      })}/${filename}`
+    : '';
+};
+
+export function removeParamRequest(objectRequest, keysUncheck = []) {
+  const requestData = { ...objectRequest };
+  Object.keys(requestData).forEach(key => {
+    if (!keysUncheck.includes(key)) {
+      if (isNullOrEmpty(requestData[key])) {
+        delete requestData[key];
+      }
+    }
+  });
+  return requestData;
+}
