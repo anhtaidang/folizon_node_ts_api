@@ -1,3 +1,5 @@
-export interface RequestBodyType<T> {
+import { Request } from 'express';
+
+export interface RequestBodyType<T> extends Request {
   body: T;
 }

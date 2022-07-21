@@ -14,6 +14,10 @@ export interface CategoryDTO {
     updatedTime: number
 }
 
+export interface CategoryTreeDTO extends CategoryDTO {
+    children?: CategoryTreeDTO[]
+}
+
 
 export type CreateCategoryDTO = Omit<CategoryDTO, 'id' | 'updatedBy' | 'updatedTime'>;
 export type UpdateCategoryDTO = Omit<CategoryDTO, 'createdBy' | 'createdTime'>;

@@ -96,9 +96,9 @@ export const validateUrl = (value: string) => {
   );
 };
 
-export const genUrlMediaByFolderType = (req, folderType = EnumFolderType.COMMON.id, filename = '') => {
-  return req
-    ? `${req.protocol}://${req.get('host')}/upload/media/${getFieldEnumConfig({
+export const genUrlMediaByFolderType = (protocol, host, folderType = EnumFolderType.COMMON.id, filename = '') => {
+  return protocol && host
+    ? `${protocol}://${host}/upload/media/${getFieldEnumConfig({
         value: folderType,
         enumConfig: EnumFolderType,
         fieldName: 'foldername',

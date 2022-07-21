@@ -1,4 +1,3 @@
-
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import adminController from '@/controllers/admin';

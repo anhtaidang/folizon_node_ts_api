@@ -27,12 +27,12 @@ export default function (dbConn: Sequelize, nameDefine = 'categoryTab'): ModelCt
     nameDefine,
     {
       id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-      parentId: { type: DataTypes.INTEGER, field:'parent_id' },
+      parentId: { type: DataTypes.INTEGER, field: 'parent_id' },
       name: { type: DataTypes.STRING },
       isActive: { type: DataTypes.TINYINT, defaultValue: 1, field: 'is_active' },
       description: {
         type: DataTypes.STRING,
-        field: 'first_name',
+        field: 'description',
       },
       urlRewrite: {
         type: DataTypes.STRING,
