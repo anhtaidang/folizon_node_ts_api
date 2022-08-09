@@ -20,8 +20,8 @@ export class ProductModel extends Model<ProductDTO, ProductCreationAttributes> i
   public hashTags: string;
   public availibilityStatusType: number;
   public statusType: number;
-  public isFreeDilivery: number;
-  public isBestSeller: number;
+  public isFreeDelivery: boolean;
+  public isBestSeller: boolean;
   public viewCount: number;
   public likeCount: number;
   public extraData: string;

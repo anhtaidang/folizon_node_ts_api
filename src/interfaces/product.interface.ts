@@ -16,7 +16,6 @@ export interface ProductDTO {
   isFreeDelivery: boolean;
   availibilityStatusType: number;
   statusType: number;
-  isFreeDilivery: boolean;
   isBestSeller: boolean;
   viewCount: number;
   likeCount: number;
