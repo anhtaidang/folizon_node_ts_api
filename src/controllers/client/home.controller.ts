@@ -51,7 +51,7 @@ class HomeController {
       );
 
       return sendApiResponseData(res, EnumResult.SUCCESS, {
-        data: { categoriesMap },
+        data: { categories: categoriesMap },
       });
     } catch (e) {
       sendError(res, next);
