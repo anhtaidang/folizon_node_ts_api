@@ -1,6 +1,7 @@
 {
   "env": "production",
   "dbConfig": {
+    "port": 6603,
     "host": "localhost",
     "user": "root",
     "password": "password",

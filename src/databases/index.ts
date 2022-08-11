@@ -6,10 +6,11 @@ import UserModel from '@models/users.model';
 import CategoryModel from '@/models/category.model';
 import ProductModel from '@/models/product.model';
 
-const { host, user, password, database, pool }: dbConfig = config.get('dbConfig');
+const { host, user, password, database, pool, port = 3306 }: dbConfig = config.get('dbConfig');
 
 const dbConn = new Sequelize.Sequelize(database, user, password, {
   host: host,
+  port: port,
   dialect: 'mysql',
   timezone: '+09:00',
   define: {

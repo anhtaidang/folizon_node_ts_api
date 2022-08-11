@@ -1,4 +1,3 @@
-import config from 'config';
 import { EnumResult } from '@constants/enumCommon';
 import { NextFunction, Response } from 'express';
 import { sendApiResponseData, sendError } from '../utils';
@@ -7,8 +6,6 @@ import CategoryService from '@/services/category.service';
 import ProductService from '@/services/product.service';
 import HomeHelper from './helpers/home.helper';
 import CommonHelper from './helpers/common.helper';
-import { ProductDTO } from '@/interfaces/product.interface';
-import c from 'config';
 import { ProductItem } from './interfaces/common';
 
 class HomeController {

@@ -1,7 +1,8 @@
 {
   "env": "development",
   "dbConfig": {
-    "host": "localhost",
+    "port": 6603,
+    "host": "103.104.122.224",
     "user": "root",
     "password": "danganhtai",
     "database": "folizon_test_db",
