@@ -1,3 +1,4 @@
+import path from 'path';
 import bcrypt from 'bcrypt';
 import SHA256 from 'crypto-js/sha256';
 import SHA1 from 'crypto-js/sha1';
@@ -11,6 +12,7 @@ import { S3MediaConfig } from '@interfaces/s3Config.interface';
  * @returns {Boolean} true & false
  * @description this value is Empty Check
  */
+
 export const isEmpty = (value: string | number | object): boolean => {
   if (value === null) {
     return true;
@@ -42,15 +44,17 @@ export const slugify = string => {
   const p = new RegExp(a.split('').join('|'), 'g');
 
   return string
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
-    .replace(/&/g, '-and-') // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '') // Remove all non-word characters
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
-    .replace(/^-+/, '') // Trim - from start of text
-    .replace(/-+$/, ''); // Trim - from end of text
+    ? string
+        .toString()
+        .toLowerCase()
+        .replace(/\s+/g, '-') // Replace spaces with -
+        .replace(p, c => b.charAt(a.indexOf(c))) // Replace special characters
+        .replace(/&/g, '-and-') // Replace & with 'and'
+        .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+        .replace(/\-\-+/g, '-') // Replace multiple - with single -
+        .replace(/^-+/, '') // Trim - from start of text
+        .replace(/-+$/, '')
+    : ''; // Trim - from end of text
 };
 
 export function hashPassword(password, salt, verifyCode = process.env.SECRET_KEY) {
@@ -76,6 +80,24 @@ export function getFieldEnumConfig({ value, enumConfig, fieldName = 'title', key
   return valueReturn;
 }
 
+export const getPublicPath = () => path.resolve(config.get('publicDir'));
+
+export const genMediaPathByFolderType = folderType =>
+  `${getPublicPath()}/upload/media/${getFieldEnumConfig({
+    value: folderType,
+    enumConfig: EnumFolderType,
+    fieldName: 'foldername',
+  })}`;
+
+export const genURLS3ByFolderType = (folderType, filename) => {
+  const s3MediaConfig: S3MediaConfig = config.get('s3Media');
+  `${s3MediaConfig.host}/media/${getFieldEnumConfig({
+    value: folderType,
+    enumConfig: EnumFolderType,
+    fieldName: 'foldername',
+  })}/${filename}`;
+};
+
 export const genS3MediaUrlByFolderType = (folderType, filename) => {
   const s3MediaConfig: S3MediaConfig = config.get('s3Media');
   return `${s3MediaConfig.host}/media/${getFieldEnumConfig({
@@ -86,8 +108,8 @@ export const genS3MediaUrlByFolderType = (folderType, filename) => {
 };
 
 export const getFileNameFromUrl = (url: string) => {
-  const data = url.match(/[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/);
-  return data[0];
+  const data = url?.match(/[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/);
+  return data?.length > 0 ? data[0] : null;
 };
 
 export const validateUrl = (value: string) => {
@@ -116,4 +138,19 @@ export function removeParamRequest(objectRequest, keysUncheck = []) {
     }
   });
   return requestData;
+}
+
+export function validateImageBase64(value) {
+  const imageBase64RegEx = /data:image\/([a-zA-Z]*);base64,([^\"]*)/;
+  const regex = new RegExp(imageBase64RegEx);
+  return regex.exec(value);
+}
+
+export function validateBase64(value) {
+  if (!value) {
+    return false;
+  }
+  const base64RegEx = /([a-zA-Z]*);base64,([^\"]*)/;
+  const regex = new RegExp(base64RegEx);
+  return regex.exec(value);
 }

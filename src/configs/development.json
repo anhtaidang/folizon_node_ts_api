@@ -1,5 +1,6 @@
 {
   "env": "development",
+  "publicDir": "src/public",
   "dbConfig": {
     "port": 6603,
     "host": "103.104.122.224",

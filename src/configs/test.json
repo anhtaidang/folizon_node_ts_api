@@ -1,10 +1,12 @@
 {
-  "env": "test",
+  "env": "development",
+  "publicDir": "src/public",
   "dbConfig": {
-    "host": "localhost",
+    "port": 6603,
+    "host": "103.104.122.224",
     "user": "root",
-    "password": "password",
-    "database": "sequelize",
+    "password": "danganhtai",
+    "database": "folizon_test_db",
     "pool": {
       "min": 0,
       "max": 5
@@ -12,6 +14,12 @@
   },
   "secretKey": "folizon",
   "authKey": "x-folizon-access-token",
+  "s3Media": {
+    "host": "https://ss-hn-1.bizflycloud.vn/images-molis-art-test",
+    "endpoint": "https://ss-hn-1.bizflycloud.vn",
+    "accessKeyId": "6ERH4LYVSIT1ZKZAQDKL",
+    "secretAccessKey": "veYAOxZ2slQ088PrHooet8vTT7ULJ7Ud6fD970tm"
+  },
   "log": {
     "format": "dev",
     "dir": "../logs"

@@ -13,7 +13,7 @@ class AuthService {
 
   private userService = new UserService();
   private authKey: string = config.get('authKey');
-  private secretKey: string = config.get('authKey');
+  private secretKey: string = config.get('secretKey');
 
   public async getCurrentUserLogin(req) {
     let userLogin: UserDTO = null;
@@ -21,7 +21,7 @@ class AuthService {
     if (token) {
       const decoded = await jwt.verify(token, process.env.SECRET_KEY);
       if (decoded) {
-        const { uid }: JwtPayload = decoded;
+        const { uid }: any = decoded;
         userLogin = await this.userService.getUserInfoById(uid, { attributes: ['uid'] });
       }
     }

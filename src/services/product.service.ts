@@ -1,6 +1,6 @@
 import DB from '@databases';
-import { CreateProductDTO, ProductDTO } from '@/interfaces/product.interface';
-import { FindOptions } from 'sequelize/types/lib/model';
+import { CreateProductDTO, ProductDTO, UpdateProductDTO } from '@/interfaces/product.interface';
+import { FindOptions, UpdateOptions } from 'sequelize/types/lib/model';
 
 class ProductService {
   public product = DB.Product;
@@ -18,6 +18,10 @@ class ProductService {
 
   public async create(data: CreateProductDTO): Promise<ProductDTO> {
     return this.product.create(data);
+  }
+
+  public async update(data: UpdateProductDTO, options?: UpdateOptions<ProductDTO>): Promise<[number, ProductDTO[]]> {
+    return this.product.update(data, options);
   }
 }
 

@@ -1,4 +1,5 @@
 import config from 'config';
+import jwt from 'jsonwebtoken';
 import { EnumResult } from '@constants/enumCommon';
 import { NextFunction, Response } from 'express';
 import UserService from '@services/user.service';
@@ -8,6 +9,8 @@ import { UserDTO } from '@interfaces/users.interface';
 import AuthService from '@services/auth.service';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { RequestBodyType } from '@interfaces/common.interface';
+import { ACCESS_TOKEN_HEADER } from '@/constants/constants';
+import { where } from 'sequelize/types';
 
 class AuthController {
   private userService = new UserService();
@@ -82,6 +85,18 @@ class AuthController {
     } catch (error) {
       next(error);
     }
+  };
+  public getCurrentUserLogin = async (req: RequestBodyType<any>) => {
+    let userLogin = null;
+    const token = req.headers[ACCESS_TOKEN_HEADER] as string;
+    if (token) {
+      const decoded = await jwt.verify(token, this.secretKey);
+      if (decoded) {
+        const { uid } = decoded as any;
+        userLogin = await this.userService.findOne({ where: { uid } });
+      }
+    }
+    return userLogin;
   };
 }
 

@@ -1,4 +1,5 @@
 import { CategoryDTO } from './category.interface';
+import { UserDTO } from './users.interface';
 
 export interface ProductDTO {
   id: number;
@@ -25,6 +26,8 @@ export interface ProductDTO {
   updatedBy: number;
   updatedTime: number;
   categoryMap?: CategoryDTO;
+  userCreated?: UserDTO;
+  userUpdated?: UserDTO;
 }
 
 export type CreateProductDTO = Omit<ProductDTO, 'id' | 'createdBy' | 'createdTime'>;
