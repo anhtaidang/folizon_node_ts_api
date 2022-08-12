@@ -19,7 +19,18 @@ class UserRoute implements Routes {
     // this.router.get(`${this.path}/:id(\\d+)`, this.usersController.getUserById);
     this.router.post(`${this.path}/get_ids`, authMiddleware, this.usersController.getUserIds);
     this.router.post(`${this.path}/get_infos`, authMiddleware, this.usersController.getUserInfoByIds);
-    this.router.post(`${this.path}/create_user`, commonMiddleware.verifyParseParam(SchemaUserCreateByUser), this.usersController.createUser);
+    this.router.post(
+      `${this.path}/create`,
+      authMiddleware,
+      commonMiddleware.verifyParseParam(SchemaUserCreateByUser),
+      this.usersController.createUserByUser,
+    );
+    this.router.post(
+      `${this.path}/update`,
+      authMiddleware,
+      commonMiddleware.verifyParseParam(SchemaUserCreateByUser),
+      this.usersController.updateUserByUser,
+    );
     // this.router.post(`${this.path}`, validationMiddleware(CreateUserDto, 'body'), this.usersController.createUser);
     // this.router.put(`${this.path}/:id(\\d+)`, validationMiddleware(CreateUserDto, 'body', true), this.usersController.updateUser);
     // this.router.delete(`${this.path}/:id(\\d+)`, this.usersController.deleteUser);

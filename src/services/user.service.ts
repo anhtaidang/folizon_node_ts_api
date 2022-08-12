@@ -1,6 +1,6 @@
 import DB from '@databases';
-import { CreateUserDTO, UserDTO } from '@interfaces/users.interface';
-import { FindOptions } from 'sequelize/types/lib/model';
+import { CreateUserDTO, UpdateUserDTO, UserDTO } from '@interfaces/users.interface';
+import { FindOptions, UpdateOptions } from 'sequelize/types/lib/model';
 
 class UserService {
   public users = DB.Users;
@@ -19,6 +19,10 @@ class UserService {
 
   public async create(userData: CreateUserDTO): Promise<UserDTO> {
     return this.users.create(userData);
+  }
+
+  public async update(userData: UpdateUserDTO, option: UpdateOptions<UserDTO>): Promise<[number, UserDTO[]]> {
+    return this.users.update(userData, option);
   }
 
   public async getUserInfoById(uid: number, option: FindOptions<UserDTO> = {}): Promise<UserDTO> {

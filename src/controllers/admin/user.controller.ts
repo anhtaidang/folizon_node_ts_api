@@ -3,14 +3,17 @@ import UserService from '@services/user.service';
 import { DBOp } from '@databases';
 import { isEmpty } from 'class-validator';
 import { EnumResult } from '@/constants/enumCommon';
-import { cryptPassword } from '@/utils/util';
+import { cryptPassword, getFileNameFromUrl } from '@/utils/util';
 import { sendApiResponseData, sendError } from '../utils';
-import { CreateUserReq, GetUserIdsReq, GetUserInfoByIdsReq } from './interfaces/user';
+import { CreateUserReq, GetUserIdsReq, GetUserInfoByIdsReq, UpdateUserReq } from './interfaces/user';
 import { RequestBodyType } from '@interfaces/common.interface';
 import UserHelper from './helpers/user.helper';
+import moment from 'moment';
+import AuthController from './auth.controller';
 
 class UserController {
   public userService = new UserService();
+  public authController = new AuthController();
   public userHelper = new UserHelper();
   public getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -61,33 +64,81 @@ class UserController {
     }
   };
 
-  public createUser = async (req: RequestBodyType<CreateUserReq>, res: Response, next: NextFunction) => {
+  public createUserByUser = async (req: RequestBodyType<CreateUserReq>, res: Response, next: NextFunction) => {
     try {
       const { basicInfo, accountInfo, personalInfo } = req.body;
 
       let codeResult = EnumResult.FAILD;
-
-      const { salt, hash } = cryptPassword(accountInfo.password ?? '123456');
-      const createUserData = await this.userService.create({
-        avatar: basicInfo.avatar,
-        username: accountInfo.username,
-        email: accountInfo.email,
-        password: hash,
-        phone: personalInfo.phone,
-        address: personalInfo.address,
-        isActive: true,
-        firstName: personalInfo.firstName,
-        lastName: personalInfo.lastName,
-        fullname: personalInfo.fullname,
-        salt: salt,
-        createdBy: 0,
-        createdTime: 0,
-      });
-      codeResult = EnumResult.SUCCESS;
-      return sendApiResponseData(res, codeResult, { data: createUserData });
+      let resonseData = null;
+      const userLogin = await this.authController.getCurrentUserLogin(req);
+      if (userLogin) {
+        const { uid } = userLogin;
+        const { salt, hash } = cryptPassword(accountInfo.password ?? '123456');
+        resonseData = await this.userService.create({
+          avatar: getFileNameFromUrl(basicInfo.avatar),
+          username: accountInfo.username,
+          email: accountInfo.email,
+          password: hash,
+          phone: personalInfo.phone,
+          address: personalInfo.address,
+          isActive: true,
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName,
+          fullname: personalInfo.fullname,
+          salt: salt,
+          createdBy: uid,
+          createdTime: moment().unix(),
+        });
+        codeResult = EnumResult.SUCCESS;
+      }
+      return sendApiResponseData(res, codeResult, { data: resonseData });
     } catch (error) {
       sendError(res, next)(error);
       throw error;
+    }
+  };
+
+  public updateUserByUser = async (req: RequestBodyType<UpdateUserReq>, res: Response, next: NextFunction) => {
+    try {
+      let codeResult = EnumResult.FAILD;
+      let responseData: any = null;
+      const userLogin = await this.authController.getCurrentUserLogin(req);
+      if (userLogin) {
+        let detail: any = {};
+        const { accountInfo, personalInfo, basicInfo, uid } = req.body;
+        if (accountInfo) {
+          detail = {
+            ...detail,
+            ...accountInfo,
+          };
+        }
+        if (personalInfo) {
+          detail = {
+            ...detail,
+            ...personalInfo,
+          };
+        }
+        if (basicInfo) {
+          detail = {
+            ...detail,
+            avatar: getFileNameFromUrl(basicInfo.avatar),
+          };
+        }
+        const { uid: currentUid } = userLogin;
+        responseData = await this.userService.update(
+          {
+            ...detail,
+            updatedBy: currentUid,
+            updatedTime: moment().unix(),
+          },
+          { where: { uid } },
+        );
+        codeResult = EnumResult.SUCCESS;
+      }
+      return sendApiResponseData(res, codeResult, { data: responseData });
+    } catch (e) {
+      sendError(res, next)(e);
+      throw e;
     }
   };
 
