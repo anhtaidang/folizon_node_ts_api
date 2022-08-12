@@ -1,6 +1,6 @@
 import DB from '@databases';
-import { CategoryDTO, CreateCategoryDTO } from '@/interfaces/category.interface';
-import { FindOptions, UpdateOptions } from 'sequelize/types/lib/model';
+import { CategoryDTO, CreateCategoryDTO, UpdateCategoryDTO } from '@/interfaces/category.interface';
+import { DestroyOptions, FindOptions, UpdateOptions } from 'sequelize/types/lib/model';
 
 class CategoryService {
   public category = DB.Category;
@@ -20,8 +20,12 @@ class CategoryService {
     return this.category.create(categoryData);
   }
 
-  public async update(data: CategoryDTO, options?: UpdateOptions<CategoryDTO>): Promise<[number, CategoryDTO[]]> {
+  public async update(data: UpdateCategoryDTO, options?: UpdateOptions<CategoryDTO>): Promise<[number, CategoryDTO[]]> {
     return this.category.update(data, options);
+  }
+
+  public async delete(options?: DestroyOptions<CategoryDTO>): Promise<number> {
+    return this.category.destroy(options);
   }
 
   public async getCombineTreeNodeCategory(node: any): Promise<CategoryDTO> {
