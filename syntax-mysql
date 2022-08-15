@@ -1,0 +1,30 @@
+docker run --detach --name=mysql --env="MYSQL_ROOT_PASSWORD=danganhtai" --publish 6603:3306 --volume=/root/docker/mysql_docker/conf.d:/etc/mysql/conf.d --volume=/storage/docker/mysql-data:/var/lib/mysql mysql/mysql-server
+
+docker run --name=mysql --publish 6603:3306 --volume=/root/docker/mysql_docker/conf.d:/etc/mysql/conf.d --volume=/storage/docker/mysql-data:/var/lib/mysql mysql/mysql-server
+mysql --host=172.17.0.1 --port=6603 -u root -p
+
+sudo docker run --name=mysql --publish 6603:3306 -d mysql/mysql-server:latest
+
+
+
+SELECT host FROM mysql.user WHERE User = 'root';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'danganhtai';
+CREATE USER 'root'@'ip_address' IDENTIFIED BY 'some_pass';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'ip_address';
+
+CREATE USER 'root'@'%' IDENTIFIED BY 'danganhtai';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+
+FLUSH PRIVILEGES;
+sudo docker run --name=mysql -d mysql/mysql-server:latest
+================
+sudo docker run --name=mysql -d mysql/mysql-server:latest
+
+CREATE USER 'root'@'172.17.0.1' IDENTIFIED BY 'danganhtai';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'172.17.0.1';
+FLUSH PRIVILEGES;
+
+update mysql.user set authentication_string='danganhtai' where user='root';
+SELECT host FROM mysql.user WHERE User = 'root';
+
+mysql -u root -ptest101 -h xxx.xxx.xxx.xxx

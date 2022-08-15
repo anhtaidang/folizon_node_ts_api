@@ -28,7 +28,7 @@ class App {
     App.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
-    this.initializeSwagger();
+    // this.initializeSwagger();
     this.initializeErrorHandling();
   }
 
@@ -56,8 +56,15 @@ class App {
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: true }));
+    // this.app.use(express.json());
+    this.app.use(express.json({ limit: '5mb', type: 'application/json' }));
+    // this.app.use(
+    //   bodyParser.urlencoded({
+    //     extended: false,
+    //   }),
+    // );
+    // this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
   }
 

@@ -37,7 +37,7 @@ class CategoryController {
         ],
       });
       return sendApiResponseData(res, EnumResult.SUCCESS, {
-        data: { categoryIds },
+        data: { categoryIds: categoryIds.map(m => m.id) },
       } as any);
     } catch (e) {
       sendError(res, next);
@@ -73,7 +73,8 @@ class CategoryController {
         responseData = await this.categoryService.create(dictData);
         codeResult = EnumResult.SUCCESS;
       }
-      return sendApiResponseData(res, codeResult, { data: responseData });
+      return res.send();
+      // return sendApiResponseData(res, codeResult, { data: responseData });
     } catch (e) {
       sendError(res, next)(e);
       throw e;

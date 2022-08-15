@@ -1,6 +1,6 @@
 import fs from 'fs';
 import config from 'config';
-import mime, { extension as getExtension } from 'mime';
+import mime from 'mime';
 import uuidv4 from 'uuid/v4';
 import AWS from 'aws-sdk';
 import { genMediaPathByFolderType, getFieldEnumConfig, getFileNameFromUrl, validateImageBase64 } from '@/utils/util';
@@ -9,10 +9,10 @@ import { S3MediaConfig } from '@/interfaces/db.interface';
 
 const Bucket = 'images-molis-art-test';
 
-const { endpoint }: S3MediaConfig = config.get('s3Media');
+const { endpoint, accessKeyId, secretAccessKey }: S3MediaConfig = config.get('s3Media');
 AWS.config.update({
-  accessKeyId: process.env.S3_ACCESS_KEY_ID,
-  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretAccessKey,
   region: 'hn',
   endpoint: endpoint,
   apiVersions: {
@@ -49,7 +49,7 @@ class MediaService {
       let result = null;
       const matches = imageContent.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
       if (matches.length === 3) {
-        const extension = getExtension(matches[1]);
+        const extension = mime.getExtension(matches[1]);
         const fileName = `${prefix}-${subPrefix}-${uuidv4()}.${extension}`;
         try {
           const base64 = imageContent.replace(/^data:([A-Za-z-+\/]+);base64,/, '');
