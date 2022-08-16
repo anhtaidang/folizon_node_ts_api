@@ -5,6 +5,7 @@ import { logger } from '@utils/logger';
 import UserModel from '@models/users.model';
 import CategoryModel from '@/models/category.model';
 import ProductModel from '@/models/product.model';
+import shopModel from '@/models/shop.model';
 
 const { host, user, password, database, pool, port = 3306 }: dbConfig = config.get('dbConfig');
 
@@ -41,6 +42,11 @@ const Category = CategoryModel(dbConn);
 Category.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
 Category.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });
 
+const Shop = shopModel(dbConn);
+Shop.hasOne(Users, { sourceKey: 'uid', foreignKey: 'uid', as: 'userOwn' });
+Shop.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
+Shop.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });
+
 const Product = ProductModel(dbConn);
 Product.hasOne(Category, { sourceKey: 'categoryId', foreignKey: 'id', as: 'categoryMap' });
 Product.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
@@ -50,6 +56,7 @@ const DB = {
   Users,
   Category,
   Product,
+  Shop,
   sequelize: dbConn, // connection instance (RAW queries)
   Sequelize, // library
   connect: () => {

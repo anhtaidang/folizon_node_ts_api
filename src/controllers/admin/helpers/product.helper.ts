@@ -37,7 +37,7 @@ class ProductHelper {
       isFreeDelivery: dict.isFreeDelivery,
       isBestSeller: dict.isBestSeller,
       imageThumb: genS3MediaUrlByFolderType(EnumFolderType.PRODUCT.id, dict.imageThumb),
-      imageGalleries: extraData ? extraData?.imageGalleries.map(m => genS3MediaUrlByFolderType(EnumFolderType.PRODUCT.id, m)) : [],
+      imageGalleries: extraData?.imageGalleries?.map(m => genS3MediaUrlByFolderType(EnumFolderType.PRODUCT.id, m)) || [],
       highlights: extraData?.highlights || [],
       classify: extraData?.classify,
       createdBy: dict.userCreated?.fullname,
