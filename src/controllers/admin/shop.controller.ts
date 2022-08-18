@@ -48,6 +48,7 @@ class ShopController {
       const { shopIds } = req.body;
       const shopInfos = await this.shopService.findAll({
         where: { id: { [DBOp.in]: shopIds } },
+        include: ['userOwn', 'userCreated', 'userUpdated'],
       });
       const shopInfosMap = shopInfos.map(this.shopHelper.bindShopInfo);
       return sendApiResponseData(res, EnumResult.SUCCESS, {
@@ -101,7 +102,10 @@ class ShopController {
       if (userLogin) {
         const { uid } = userLogin;
         const oldDict = await this.shopService.findOne({ where: { id } });
-        responseData = await this.shopService.update((await this.shopHelper.getCreateUpdateShopDict({ uid, ...req.body }, oldDict)) as UpdateShopDTO);
+        responseData = await this.shopService.update(
+          (await this.shopHelper.getCreateUpdateShopDict({ uid, ...req.body }, oldDict)) as UpdateShopDTO,
+          { where: { id } },
+        );
         codeResult = EnumResult.SUCCESS;
       }
       return sendApiResponseData(res, codeResult, { data: responseData });

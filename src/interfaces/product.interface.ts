@@ -1,4 +1,5 @@
 import { CategoryDTO } from './category.interface';
+import { ShopDTO } from './shop.interface';
 import { UserDTO } from './users.interface';
 
 export interface ProductDTO {
@@ -26,6 +27,7 @@ export interface ProductDTO {
   updatedBy: number;
   updatedTime: number;
   categoryMap?: CategoryDTO;
+  shopMap?: ShopDTO;
   userCreated?: UserDTO;
   userUpdated?: UserDTO;
 }

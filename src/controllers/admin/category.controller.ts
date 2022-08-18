@@ -50,6 +50,7 @@ class CategoryController {
       const { categoryIds } = req.body;
       let categoryInfos = await this.categoryService.findAll({
         where: { id: { [DBOp.in]: categoryIds } },
+        include: ['userCreated', 'userUpdated'],
       });
       // categoryInfos = await Promise.all(categoryInfos.map(services.category.getCombineTreeNodeCategory));
       const categoryInfosMap = categoryInfos.map(m => this.categoryHelper.bindDataTreeNodeCategory(m, this.categoryHelper.bindCategoryInfo));

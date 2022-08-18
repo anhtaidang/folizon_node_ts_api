@@ -14,7 +14,6 @@ export interface CategoryDTO {
   createdTime: number;
   updatedBy: number;
   updatedTime: number;
-  categoryMap?: CategoryDTO;
   userCreated?: UserDTO;
   userUpdated?: UserDTO;
 }

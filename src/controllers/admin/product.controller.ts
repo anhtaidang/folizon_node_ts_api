@@ -39,7 +39,10 @@ class ProductController {
       const codeResult = EnumResult.SUCCESS;
       const { productIds } = req.body;
 
-      const response = await this.productService.findAll({ where: { id: { [DBOp.in]: productIds } }, include: null });
+      const response = await this.productService.findAll({
+        where: { id: { [DBOp.in]: productIds } },
+        include: ['shopMap', 'userCreated', 'userUpdated'],
+      });
       return sendApiResponseData(res, codeResult, { data: { productInfos: response.map(this.productHelper.bindProductInfo) } });
     } catch (e) {
       sendError(res, next);
@@ -52,6 +55,7 @@ class ProductController {
       const { keyword, isActive } = req.body;
       let productInfos = await this.productService.findAll({
         where: removeParamRequest({ title: { [DBOp.like]: `%${keyword}%` }, isActive }),
+        include: ['shopMap', 'userCreated', 'userUpdated'],
       });
       const producInfosMap = productInfos.map(m => ({
         productId: m.id,

@@ -91,7 +91,7 @@ export const genMediaPathByFolderType = folderType =>
 
 export const genURLS3ByFolderType = (folderType, filename) => {
   const s3MediaConfig: S3MediaConfig = config.get('s3Media');
-  `${s3MediaConfig.host}/media/${getFieldEnumConfig({
+  return `${s3MediaConfig.host}/media/${getFieldEnumConfig({
     value: folderType,
     enumConfig: EnumFolderType,
     fieldName: 'foldername',

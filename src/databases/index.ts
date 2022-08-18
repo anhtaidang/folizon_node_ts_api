@@ -48,6 +48,7 @@ Shop.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated
 Shop.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });
 
 const Product = ProductModel(dbConn);
+Product.hasOne(Shop, { sourceKey: 'shopId', foreignKey: 'id', as: 'shopMap' });
 Product.hasOne(Category, { sourceKey: 'categoryId', foreignKey: 'id', as: 'categoryMap' });
 Product.hasOne(Users, { sourceKey: 'createdBy', foreignKey: 'uid', as: 'userCreated' });
 Product.hasOne(Users, { sourceKey: 'updatedBy', foreignKey: 'uid', as: 'userUpdated' });

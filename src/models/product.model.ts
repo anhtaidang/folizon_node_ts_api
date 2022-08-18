@@ -60,6 +60,14 @@ export default function (dbConn: Sequelize, nameDefine = 'productTab'): ModelCto
         type: DataTypes.STRING,
         field: 'hash_tags',
       },
+      retailPrice: {
+        type: DataTypes.BIGINT,
+        field: 'retail_price',
+      },
+      salePrice: {
+        type: DataTypes.BIGINT,
+        field: 'sale_price',
+      },
       likeCount: {
         type: DataTypes.INTEGER,
         field: 'like_count',
