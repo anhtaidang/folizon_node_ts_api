@@ -54,9 +54,9 @@ class UserController {
     try {
       const { uids } = req.body;
       const userInfos = await this.userService.findAll({ where: { uid: { [DBOp.in]: uids } } });
-      const uinfors = userInfos.map(this.userHelper.bindDataUserInfos);
+      const uinfos = userInfos.map(this.userHelper.bindDataUserInfos);
       return sendApiResponseData(res, EnumResult.SUCCESS, {
-        data: { uinfors },
+        data: { uinfos },
       });
     } catch (e) {
       sendError(res, next)(e);

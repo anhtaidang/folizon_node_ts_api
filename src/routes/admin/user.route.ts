@@ -6,7 +6,7 @@ import adminController from '@/controllers/admin';
 import authMiddleware from '@middlewares/auth.middleware';
 
 class UserRoute implements Routes {
-  public path = '/user';
+  public path = '/admin/user';
   public router = Router();
   public usersController = new adminController.UserController();
 
