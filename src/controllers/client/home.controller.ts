@@ -46,7 +46,6 @@ class HomeController {
           };
         }),
       );
-
       return sendApiResponseData(res, EnumResult.SUCCESS, {
         data: { categories: categoriesMap },
       });

@@ -11,9 +11,34 @@ import morgan from 'morgan';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import DB from '@databases';
+import RedisCacheManager from '@/cache/redis';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
+import { createTerminus, HealthCheckError } from '@godaddy/terminus';
+
+const options = {
+  healthChecks: {
+    '/healthcheck': () => {
+      return Promise.resolve();
+    },
+  },
+  beforeShutdown: () => {
+    // Give it 5s to shutdown
+    return new Promise(resolve => {
+      setTimeout(resolve, 5000);
+    });
+  },
+  onSignal: () => {
+    console.log('Signal recieved, start shutdowning server..');
+    return Promise.all([]);
+    // return Promise.all([disconnectRedis()]);
+  },
+  onShutdown: () => {
+    console.log('Graceful shutdowning server..');
+    return Promise.resolve('OK');
+  },
+};
 
 class App {
   public app: express.Application;
@@ -66,6 +91,7 @@ class App {
     // this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
+    createTerminus(this.app, options);
   }
 
   private initializeRoutes(routes: Routes[]) {
