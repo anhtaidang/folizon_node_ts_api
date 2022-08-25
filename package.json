@@ -48,8 +48,7 @@
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5",
     "@godaddy/terminus": "^4.6.0",
-    "ioredis": "^4.22.0",
-    "object-hash": "^2.1.1"
+    "ioredis": "^4.22.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
