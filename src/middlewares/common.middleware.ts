@@ -4,6 +4,12 @@ import { validate } from 'jsonschema';
 import { sendApiResponseData } from '@controllers/utils';
 import { NextFunction, Request, Response } from 'express';
 import { EnumResult } from '@constants/enumCommon';
+import RedisCacheManager from '@/cache/redis';
+import { errorLog, infoLog, warningLog } from '@/utils/log';
+
+const INTERVAL = 50;
+const MAX_WAIT = 5000;
+const DEFAULT_CACHE_TIME = (process.env.DEFAULT_CACHE_TIME || 60) as number;
 
 const commonMiddleware = {
   verifyParseParam:
@@ -31,6 +37,40 @@ const commonMiddleware = {
     // return isVerifyHeader ? next() : sendApiResponseData(res, EnumResult.ERROR_HEADER);
     return next();
   },
+};
+
+const redisCacheMiddleware = ({ cacheKey, ttl = DEFAULT_CACHE_TIME }) => {
+  return async (req: Request & any, res: Response, next: NextFunction) => {
+    req.saveCache = value => {
+      RedisCacheManager.setCache(cacheKey, value, ttl);
+    };
+
+    const { key, field = '' } = cacheKey;
+    const cached = await RedisCacheManager.getCache(cacheKey);
+
+    if (cached) {
+      if (cached !== 'updating') {
+        infoLog(`Hit: ${key}:${field}`);
+        return res.status(200).send(cached);
+      }
+      const start = new Date().getTime();
+      infoLog(`Wait: ${key}:${field}`);
+
+      while (new Date().getTime() - start > MAX_WAIT) {
+        await sleep(INTERVAL);
+        let data = await RedisCacheManager.getCache({ key, field });
+        if (data && data !== 'updating') {
+          infoLog(`Receive: ${key}:${field}`);
+          return res.status(200).send(data);
+        }
+      }
+      errorLog(`Error: ${key}:${field}`);
+      return next();
+    } else {
+      warningLog(`Miss: ${key}:${field}`);
+      return next();
+    }
+  };
 };
 
 export default commonMiddleware;

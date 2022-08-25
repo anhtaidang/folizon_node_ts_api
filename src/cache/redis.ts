@@ -84,6 +84,7 @@ class RedisCache {
   };
   public disconnectRedis = () => {
     if (this.redisClient) {
+      warningLog('Disconnect to Redis..');
       return Promise.all([this.redisClient.quit()]);
     }
   };

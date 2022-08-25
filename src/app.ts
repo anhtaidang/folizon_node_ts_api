@@ -31,7 +31,7 @@ const options = {
   },
   onSignal: () => {
     console.log('Signal recieved, start shutdowning server..');
-    return Promise.all([]);
+    return Promise.all([RedisCacheManager.disconnectRedis()]);
     // return Promise.all([disconnectRedis()]);
   },
   onShutdown: () => {
