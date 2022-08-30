@@ -12,6 +12,7 @@
       "max": 5
     }
   },
+  "redisHost": "103.104.122.224:6379",
   "secretKey": "folizon",
   "authKey": "x-folizon-access-token",
   "s3Media": {

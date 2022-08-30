@@ -1,8 +1,11 @@
 import Redis from 'ioredis';
+import config from 'config';
 import { infoLog, warningLog, errorLog } from '@/utils/log';
 
-const REDIS_HOSTS = `${process.env.REDIS_HOST || '103.104.122.224:6379'}`.split(',');
-const CACHE_PREFIX = process.env.CACHE_PREFIX || 'folizon';
+const redisHost: string = config.get('redisHost');
+
+const REDIS_HOSTS = `${redisHost || '103.104.122.224:6379'}`.split(',');
+const CACHE_PREFIX = 'folizon';
 
 class RedisCache {
   private redisClient = null;

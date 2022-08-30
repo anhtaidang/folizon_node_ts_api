@@ -10,7 +10,6 @@ import AuthService from '@services/auth.service';
 import { RequestWithUser } from '@interfaces/auth.interface';
 import { RequestBodyType } from '@interfaces/common.interface';
 import { ACCESS_TOKEN_HEADER } from '@/constants/constants';
-import { where } from 'sequelize/types';
 
 class AuthController {
   private userService = new UserService();
