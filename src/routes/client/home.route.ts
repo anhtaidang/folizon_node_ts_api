@@ -1,9 +1,5 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import commonMiddleware from '../../middlewares/common.middleware';
-import { SchemaUserCreateByUser } from '@/constants/enumFormSchema';
-import adminController from '@/controllers/admin';
-import authMiddleware from '@middlewares/auth.middleware';
 import clientController from '@/controllers/client';
 
 class HomeRoute implements Routes {
