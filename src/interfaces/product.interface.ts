@@ -11,6 +11,7 @@ export interface ProductDTO {
   content: string;
   description: string;
   imageThumb: string;
+  price: number;
   retailPrice: number;
   salePrice: number;
   isActive: boolean;
@@ -18,6 +19,7 @@ export interface ProductDTO {
   isFreeDelivery: boolean;
   availibilityStatusType: number;
   statusType: number;
+  crawlType?: string;
   isBestSeller: boolean;
   viewCount: number;
   likeCount: number;
@@ -32,5 +34,5 @@ export interface ProductDTO {
   userUpdated?: UserDTO;
 }
 
-export type CreateProductDTO = Omit<ProductDTO, 'id' | 'createdBy' | 'createdTime'>;
+export type CreateProductDTO = Omit<ProductDTO, 'id' | 'createdBy' | 'createdTime' | 'crawlType'>;
 export type UpdateProductDTO = Omit<ProductDTO, 'updatedBy' | 'updatedTime'>;

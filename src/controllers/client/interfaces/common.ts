@@ -11,6 +11,7 @@ export type ProductItem = {
   title: string;
   urlDetail: string;
   urlRewrite: string;
+  price: number;
   salePrice: number;
   retailPrice: number;
   discount: number;

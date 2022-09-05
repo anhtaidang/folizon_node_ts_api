@@ -14,9 +14,15 @@
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
+  "dependenciesComments": {
+    "cheerio": "Tthư viện hỗ trợ parse DOM giống như Jquery",
+    "request-promise": "Thư viện nâng cấp của thư viện request, nó hỗ trợ thêm promise, được dùng hỗ trợ lấy thông tin trang cần lấy dữ liệu"
+  },
   "dependencies": {
+    "@godaddy/terminus": "^4.6.0",
     "aws-sdk": "2",
     "bcrypt": "^5.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "compression": "^1.7.4",
@@ -30,6 +36,7 @@
     "express": "^4.17.1",
     "helmet": "^4.6.0",
     "hpp": "^0.2.3",
+    "ioredis": "^4.22.0",
     "jest": "^27.0.6",
     "jsonschema": "^1.2.5",
     "jsonwebtoken": "^8.5.1",
@@ -39,6 +46,8 @@
     "mysql2": "^2.2.5",
     "node-cache": "^5.1.2",
     "pm2": "^5.1.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
     "sequelize": "^6.6.5",
     "swagger-jsdoc": "^6.0.0",
     "swagger-ui-express": "^4.1.6",
@@ -46,9 +55,7 @@
     "ts-node": "^10.0.0",
     "typescript": "^4.3.5",
     "winston": "^3.3.3",
-    "winston-daily-rotate-file": "^4.5.5",
-    "@godaddy/terminus": "^4.6.0",
-    "ioredis": "^4.22.0"
+    "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

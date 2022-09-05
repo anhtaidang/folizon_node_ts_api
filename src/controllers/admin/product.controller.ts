@@ -1,4 +1,6 @@
 import config from 'config';
+import cheerio from 'cheerio';
+import rq from 'request-promise';
 import { NextFunction, Response } from 'express';
 import { sendApiResponseData, sendError } from '../utils';
 import { RequestBodyType } from '@interfaces/common.interface';
@@ -10,6 +12,7 @@ import ProductService from '@/services/product.service';
 import ProductHelper from './helpers/product.helper';
 import AuthController from './auth.controller';
 import { CreateProductDTO, ProductDTO, UpdateProductDTO } from '@/interfaces/product.interface';
+import { OptionalType } from '@/types';
 
 class ProductController {
   private authController = new AuthController();
@@ -91,7 +94,7 @@ class ProductController {
       throw e;
     }
   };
-  public updateProduct = async (req, res, next) => {
+  public updateProduct = async (req: RequestBodyType<any>, res: Response, next: NextFunction) => {
     try {
       let codeResult = EnumResult.FAILD;
       let responseData = null;
@@ -113,6 +116,62 @@ class ProductController {
         codeResult = EnumResult.SUCCESS;
       }
       return sendApiResponseData(res, codeResult, responseData);
+    } catch (e) {
+      sendError(res, next)(e);
+      throw e;
+    }
+  };
+  public crawlProductFromTiki = async (req: RequestBodyType<any>, res: Response, next: NextFunction) => {
+    try {
+      const host = 'https://tiki.vn';
+      await rq(`${host}/dien-thoai-smartphone/c1795`, async (error, response, html) => {
+        // gửi request đến trang
+        if (!error && response.statusCode == 200) {
+          const $ = cheerio.load(html); // load HTML
+
+          const resUrl = [];
+          let resData = [];
+          $('.product-item').each((index, el) => {
+            const elmAttr = $(el).attr();
+            resUrl.push(`${elmAttr.href}`);
+          });
+
+          const parsePriceNum = value => {
+            return value ? parseFloat(value.replace(/[.]/g, '')) : 0;
+          };
+
+          const list = resUrl.map(async url => {
+            let obj = null;
+            await rq(`${host}${url}`, (error, response, html) => {
+              if (!error && response.statusCode == 200) {
+                const $$ = cheerio.load(html); // load HTML
+                const title = $$('h1.title').text();
+                const img = $$('.group-images .thumbnail picture img').attr();
+                const flashSalePrice = $$('.flash-sale-price span').html();
+                const listPrice = $$('.flash-sale-price .sale .list-price').html();
+                const productPrice = $$('.product-price__list-price').html();
+                const productCurrentPrice = $$('.product-price__current-price').html();
+                obj = {
+                  categoryId: 2,
+                  shopId: 1,
+                  urlRewrite: url.split('.')[0].replace('/', ''),
+                  title,
+                  imageThumb: img?.src,
+                  price: parsePriceNum(productPrice || productCurrentPrice || listPrice),
+                  salePrice: parsePriceNum(flashSalePrice),
+                  crawlType: 'TIKI',
+                  createdBy: 1,
+                } as OptionalType<ProductDTO>;
+              }
+            });
+            return obj;
+          });
+          resData = await Promise.all(list);
+          // const data = await Promise.all(resData.map(m => this.productService.create(m, { ignoreDuplicates: true })));
+          const data = await this.productService.bulkCreate(resData, { ignoreDuplicates: true });
+          sendApiResponseData(res, EnumResult.SUCCESS, { data });
+        }
+      });
     } catch (e) {
       sendError(res, next)(e);
       throw e;

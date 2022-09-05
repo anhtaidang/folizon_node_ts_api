@@ -1,6 +1,6 @@
 import DB from '@databases';
 import { CreateProductDTO, ProductDTO, UpdateProductDTO } from '@/interfaces/product.interface';
-import { FindOptions, UpdateOptions } from 'sequelize/types/lib/model';
+import { BulkCreateOptions, CreateOptions, FindOptions, UpdateOptions } from 'sequelize/types/lib/model';
 
 class ProductService {
   public product = DB.Product;
@@ -16,8 +16,12 @@ class ProductService {
     return this.product.findByPk(userId, options);
   }
 
-  public async create(data: CreateProductDTO): Promise<ProductDTO> {
-    return this.product.create(data);
+  public async create(data: CreateProductDTO, options?: CreateOptions<ProductDTO>): Promise<ProductDTO> {
+    return this.product.create(data, options);
+  }
+
+  public async bulkCreate(datas: CreateProductDTO[], options?: BulkCreateOptions<ProductDTO>): Promise<ProductDTO[]> {
+    return this.product.bulkCreate(datas, options);
   }
 
   public async update(data: UpdateProductDTO, options?: UpdateOptions<ProductDTO>): Promise<[number, ProductDTO[]]> {

@@ -18,6 +18,7 @@ class ProductRoute implements Routes {
     this.router.post(`${this.path}/get_by_keyword`, this.productController.getProductInfoByKeyword);
     this.router.post(`${this.path}/create`, authMiddleware, this.productController.createProduct);
     this.router.post(`${this.path}/update`, authMiddleware, this.productController.updateProduct);
+    this.router.get(`${this.path}/crawl_data_from_tiki`, this.productController.crawlProductFromTiki);
   }
 }
 

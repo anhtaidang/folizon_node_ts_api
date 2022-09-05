@@ -14,12 +14,14 @@ export class ProductModel extends Model<ProductDTO, ProductCreationAttributes> i
   public content: string;
   public description: string;
   public imageThumb: string;
+  public price: number;
   public retailPrice: number;
   public salePrice: number;
   public isActive: boolean;
   public hashTags: string;
   public availibilityStatusType: number;
   public statusType: number;
+  public crawlType: string;
   public isFreeDelivery: boolean;
   public isBestSeller: boolean;
   public viewCount: number;
@@ -60,6 +62,9 @@ export default function (dbConn: Sequelize, nameDefine = 'productTab'): ModelCto
         type: DataTypes.STRING,
         field: 'hash_tags',
       },
+      price: {
+        type: DataTypes.BIGINT,
+      },
       retailPrice: {
         type: DataTypes.BIGINT,
         field: 'retail_price',
@@ -83,6 +88,10 @@ export default function (dbConn: Sequelize, nameDefine = 'productTab'): ModelCto
       statusType: {
         type: DataTypes.INTEGER,
         field: 'status_type',
+      },
+      crawlType: {
+        type: DataTypes.STRING,
+        field: 'crawl_type',
       },
       extraData: {
         type: DataTypes.INTEGER,

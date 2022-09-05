@@ -1,6 +1,5 @@
 import { EnumFolderType } from '@/constants/enum';
 import { CategoryDTO } from '@/interfaces/category.interface';
-import { ProductDTO } from '@/interfaces/product.interface';
 import { genS3MediaUrlByFolderType } from '@/utils/util';
 import { CategoryMapProduct } from '../interfaces/common';
 

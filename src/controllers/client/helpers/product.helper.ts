@@ -11,6 +11,7 @@ class ProductHelper {
       urlRewrite: dict.urlRewrite,
       description: dict.description,
       content: dict.content,
+      price: dict.price,
       salePrice: dict.salePrice,
       retailPrice: dict.retailPrice,
       shopId: dict.shopMap?.id,

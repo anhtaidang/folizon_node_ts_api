@@ -26,9 +26,11 @@ const dbConn = new Sequelize.Sequelize(database, user, password, {
     max: pool.max,
   },
   logQueryParameters: process.env.NODE_ENV === 'development',
-  logging: (query, time) => {
-    logger.info(time + 'ms' + ' ' + query);
-  },
+  // logging: (query, time) => {
+  //   logger.info(time + 'ms' + ' ' + query);
+  // },
+  // disable logging; default: console.log
+  logging: false,
   benchmark: true,
 });
 

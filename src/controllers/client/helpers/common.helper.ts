@@ -12,6 +12,7 @@ class CommonHelper {
       title: dict.title,
       urlDetail: `/${dict.categoryMap?.urlRewrite || ROOT_CATEGORY_URL_REWRITE}/${dict.urlRewrite}`,
       urlRewrite: dict.urlRewrite,
+      price: dict.price,
       salePrice: dict.salePrice,
       retailPrice: dict.retailPrice,
       discount: extraData?.discount,
