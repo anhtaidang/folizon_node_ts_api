@@ -71,11 +71,13 @@ class CategoryController {
       if (userLogin) {
         const { uid } = userLogin;
         const dictData = (await this.categoryHelper.getCreateUpdateCategoryDict({ uid, ...req.body })) as CreateCategoryDTO;
-        responseData = await this.categoryService.create(dictData);
+        responseData = await this.categoryService.create(dictData).catch(e => {
+          sendError(res, next)(e);
+          throw e;
+        });
         codeResult = EnumResult.SUCCESS;
       }
-      return res.send();
-      // return sendApiResponseData(res, codeResult, { data: responseData });
+      sendApiResponseData(res, codeResult, { data: responseData });
     } catch (e) {
       sendError(res, next)(e);
       throw e;
