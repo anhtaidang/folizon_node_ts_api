@@ -2,7 +2,7 @@ import { EnumDateTimeFormatFull, EnumFolderType } from '@/constants/enum';
 import { CategoryDTO, CategoryTreeDTO } from '@/interfaces/category.interface';
 import MediaService from '@/services/media.service';
 import { OptionalType } from '@/types';
-import { genS3MediaUrlByFolderType, getFileNameFromUrl, isNullOrEmpty, slugify, validateImageBase64 } from '@/utils/util';
+import { genURLS3ByFolderType, getFileNameFromUrl, isNullOrEmpty, slugify, validateImageBase64 } from '@/utils/util';
 import moment from 'moment';
 
 class CategoryHelper {
@@ -27,11 +27,11 @@ class CategoryHelper {
       parentId: dict.parentId,
       name: dict.name,
       urlRewrite: dict.urlRewrite,
-      parentName: dict.categoryMap?.name,
+      parentName: dict?.categoryMap?.name,
       description: dict.description,
       isActive: dict.isActive,
-      imageThumb: !isNullOrEmpty(dict.imageThumb) ? genS3MediaUrlByFolderType(EnumFolderType.CATEGORY.id, dict.imageThumb) : null,
-      imageBanner: !isNullOrEmpty(dict.imageBanner) ? genS3MediaUrlByFolderType(EnumFolderType.CATEGORY.id, dict.imageBanner) : null,
+      imageThumb: !isNullOrEmpty(dict.imageThumb) ? genURLS3ByFolderType(EnumFolderType.CATEGORY.id, dict.imageThumb) : null,
+      imageBanner: !isNullOrEmpty(dict.imageBanner) ? genURLS3ByFolderType(EnumFolderType.CATEGORY.id, dict.imageBanner) : null,
       userCreated: dict.userCreated,
       createdTime: dict.createdTime ? moment.unix(dict.createdTime).format(EnumDateTimeFormatFull) : null,
       userUpdated: dict.userUpdated,
@@ -52,7 +52,7 @@ class CategoryHelper {
       name: dict.name,
       urlRewrite: dict.urlRewrite,
       isActive: dict.isActive,
-      imageThumb: genS3MediaUrlByFolderType(EnumFolderType.CATEGORY.id, dict.imageThumb),
+      imageThumb: genURLS3ByFolderType(EnumFolderType.CATEGORY.id, dict.imageThumb),
     };
     if (!isNullOrEmpty(dict.children)) {
       obj = {

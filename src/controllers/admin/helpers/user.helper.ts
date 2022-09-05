@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { EnumDateTimeFormat_Sperator_Full, EnumFolderType } from '@/constants/enum';
-import { genS3MediaUrlByFolderType, isEmpty, validateUrl } from '@utils/util';
+import { genURLS3ByFolderType, isEmpty, validateUrl } from '@utils/util';
 import { USER_AVATAR_DEFAULT } from '@constants/constants';
 import { UserDTO } from '@/interfaces/users.interface';
 
@@ -17,7 +17,7 @@ class UserHelper {
       email: dict.email,
       address: dict.address,
       salt: dict.salt,
-      avatar: validateUrl(avatar) ? avatar : genS3MediaUrlByFolderType(EnumFolderType.USER.id, dict.avatar),
+      avatar: validateUrl(avatar) ? avatar : genURLS3ByFolderType(EnumFolderType.USER.id, dict.avatar),
       isActive: dict.isActive,
       createdBy: dict.userCreated?.fullname || null,
       createdTime: moment.unix(dict.createdTime).format(EnumDateTimeFormat_Sperator_Full),

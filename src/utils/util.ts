@@ -82,6 +82,11 @@ export function getFieldEnumConfig({ value, enumConfig, fieldName = 'title', key
 
 export const getPublicPath = () => path.resolve(config.get('publicDir'));
 
+export const isUrl = s => {
+  var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+  return regexp.test(s);
+};
+
 export const genMediaPathByFolderType = folderType =>
   `${getPublicPath()}/upload/media/${getFieldEnumConfig({
     value: folderType,
@@ -90,6 +95,9 @@ export const genMediaPathByFolderType = folderType =>
   })}`;
 
 export const genURLS3ByFolderType = (folderType, filename) => {
+  if (isUrl(filename)) {
+    return filename;
+  }
   const s3MediaConfig: S3MediaConfig = config.get('s3Media');
   return `${s3MediaConfig.host}/media/${getFieldEnumConfig({
     value: folderType,
@@ -98,14 +106,17 @@ export const genURLS3ByFolderType = (folderType, filename) => {
   })}/${filename}`;
 };
 
-export const genS3MediaUrlByFolderType = (folderType, filename) => {
-  const s3MediaConfig: S3MediaConfig = config.get('s3Media');
-  return `${s3MediaConfig.host}/media/${getFieldEnumConfig({
-    value: folderType,
-    enumConfig: EnumFolderType,
-    fieldName: 'foldername',
-  })}/${filename}`;
-};
+// export const genS3MediaUrlByFolderType = (folderType, filename) => {
+//   if (isUrl(filename)) {
+//     return filename;
+//   }
+//   const s3MediaConfig: S3MediaConfig = config.get('s3Media');
+//   return `${s3MediaConfig.host}/media/${getFieldEnumConfig({
+//     value: folderType,
+//     enumConfig: EnumFolderType,
+//     fieldName: 'foldername',
+//   })}/${filename}`;
+// };
 
 export const getFileNameFromUrl = (url: string) => {
   const data = url?.match(/[^/\\&\?]+\.\w{3,4}(?=([\?&].*$|$))/);

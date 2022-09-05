@@ -124,7 +124,7 @@ class ProductController {
   public crawlProductFromTiki = async (req: RequestBodyType<any>, res: Response, next: NextFunction) => {
     try {
       const host = 'https://tiki.vn';
-      await rq(`${host}/dien-thoai-smartphone/c1795`, async (error, response, html) => {
+      await rq(`${host}/dien-thoai-may-tinh-bang/c1789`, async (error, response, html) => {
         // gửi request đến trang
         if (!error && response.statusCode == 200) {
           const $ = cheerio.load(html); // load HTML

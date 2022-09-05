@@ -1,6 +1,6 @@
 import { EnumFolderType } from '@/constants/enum';
 import { CategoryDTO } from '@/interfaces/category.interface';
-import { genS3MediaUrlByFolderType } from '@/utils/util';
+import { genURLS3ByFolderType } from '@/utils/util';
 import { CategoryMapProduct } from '../interfaces/common';
 
 class HomeHelper {
@@ -11,8 +11,8 @@ class HomeHelper {
       id: item.id,
       name: item.name,
       urlRewrite: item.urlRewrite,
-      imageThumb: genS3MediaUrlByFolderType(EnumFolderType.CATEGORY.id, item.imageThumb),
-      imageBanner: genS3MediaUrlByFolderType(EnumFolderType.CATEGORY.id, item.imageBanner),
+      imageThumb: genURLS3ByFolderType(EnumFolderType.CATEGORY.id, item.imageThumb),
+      imageBanner: genURLS3ByFolderType(EnumFolderType.CATEGORY.id, item.imageBanner),
     };
   };
 }

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { EnumDateTimeFormatFull, EnumFolderType, EnumProductAvailibilityType, EnumProductStatusType } from '@/constants/enum';
 import { ProductDTO } from '@/interfaces/product.interface';
-import { genS3MediaUrlByFolderType, getFieldEnumConfig, getFileNameFromUrl, slugify, validateImageBase64 } from '@/utils/util';
+import { genURLS3ByFolderType, getFieldEnumConfig, getFileNameFromUrl, slugify, validateImageBase64 } from '@/utils/util';
 import MediaService from '@/services/media.service';
 import { OptionalType } from '@/types';
 
@@ -37,8 +37,8 @@ class ProductHelper {
       isActive: dict.isActive,
       isFreeDelivery: dict.isFreeDelivery,
       isBestSeller: dict.isBestSeller,
-      imageThumb: genS3MediaUrlByFolderType(EnumFolderType.PRODUCT.id, dict.imageThumb),
-      imageGalleries: extraData?.imageGalleries?.map(m => genS3MediaUrlByFolderType(EnumFolderType.PRODUCT.id, m)) || [],
+      imageThumb: genURLS3ByFolderType(EnumFolderType.PRODUCT.id, dict.imageThumb),
+      imageGalleries: extraData?.imageGalleries?.map(m => genURLS3ByFolderType(EnumFolderType.PRODUCT.id, m)) || [],
       highlights: extraData?.highlights || [],
       classify: extraData?.classify,
       createdBy: dict.userCreated?.fullname,

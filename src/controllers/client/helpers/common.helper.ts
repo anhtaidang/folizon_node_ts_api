@@ -1,7 +1,7 @@
 import { ROOT_CATEGORY_URL_REWRITE } from '@/constants/constants';
 import { EnumFolderType } from '@/constants/enum';
 import { ProductDTO } from '@/interfaces/product.interface';
-import { genS3MediaUrlByFolderType } from '@/utils/util';
+import { genURLS3ByFolderType } from '@/utils/util';
 import { ProductItem } from '../interfaces/common';
 
 class CommonHelper {
@@ -26,7 +26,7 @@ class CommonHelper {
       categoryName: dict.categoryMap?.name || 'Root Category',
       //   shopId: dict.shopMap?.id,
       //   shopName: dict.shopMap?.name,
-      imageThumb: genS3MediaUrlByFolderType(EnumFolderType.PRODUCT.id, dict.imageThumb),
+      imageThumb: genURLS3ByFolderType(EnumFolderType.PRODUCT.id, dict.imageThumb),
     };
   };
 }
