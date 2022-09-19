@@ -46,6 +46,7 @@ class HomeController {
           };
         }),
       );
+      req.saveCache({ categories: categoriesMap });
       return sendApiResponseData(res, EnumResult.SUCCESS, {
         data: { categories: categoriesMap },
       });

@@ -39,29 +39,44 @@ const commonMiddleware = {
   },
 };
 
-const redisCacheMiddleware = ({ cacheKey, ttl = DEFAULT_CACHE_TIME }) => {
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+type RedisCacheMiddleware = {
+  cacheKey: {
+    key: string;
+    field?: string;
+  };
+  ttl?: number;
+};
+
+export const redisCacheMiddleware = ({ cacheKey, ttl = DEFAULT_CACHE_TIME }: RedisCacheMiddleware) => {
   return async (req: Request & any, res: Response, next: NextFunction) => {
     req.saveCache = value => {
       RedisCacheManager.setCache(cacheKey, value, ttl);
     };
-
     const { key, field = '' } = cacheKey;
     const cached = await RedisCacheManager.getCache(cacheKey);
 
     if (cached) {
       if (cached !== 'updating') {
         infoLog(`Hit: ${key}:${field}`);
-        return res.status(200).send(cached);
+        return sendApiResponseData(res, EnumResult.SUCCESS, {
+          data: cached,
+        });
+        // return res.status(200).send(cached);
       }
       const start = new Date().getTime();
       infoLog(`Wait: ${key}:${field}`);
 
       while (new Date().getTime() - start > MAX_WAIT) {
-        await sleep(INTERVAL);
-        let data = await RedisCacheManager.getCache({ key, field });
+        await delay(INTERVAL);
+        const data = await RedisCacheManager.getCache({ key, field });
         if (data && data !== 'updating') {
           infoLog(`Receive: ${key}:${field}`);
-          return res.status(200).send(data);
+          // return res.status(200).send(data);
+          return sendApiResponseData(res, EnumResult.SUCCESS, {
+            data: cached,
+          });
         }
       }
       errorLog(`Error: ${key}:${field}`);
